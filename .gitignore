@@ -8,6 +8,8 @@ dist/
 # Database
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 
 # Environment
 .env
