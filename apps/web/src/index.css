@@ -56,6 +56,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  span, p, div, h1, h2, h3, h4, h5, h6, label {
+    @apply text-foreground;
+  }
 }
 
 /* Custom scrollbar */
