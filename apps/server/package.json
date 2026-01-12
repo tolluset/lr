@@ -1,0 +1,28 @@
+{
+  "name": "@local-review/server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@local-review/db": "workspace:*",
+    "@local-review/shared": "workspace:*",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.38.3",
+    "express": "^4.21.2",
+    "nanoid": "^5.0.9",
+    "simple-git": "^3.27.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
