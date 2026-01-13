@@ -14,7 +14,9 @@ Simple code reviewer in local
 - Session Management – Create, list, and update the status of review sessions
 - SQLite Persistence – All data is stored in .local-review.db
 
-Project Structure
+## Project Structure
+
+```
 local-review/
 ├── apps/
 │   ├── web/         # React + Vite + Tailwind + shadcn/ui
@@ -22,6 +24,7 @@ local-review/
 ├── packages/
 │   ├── db/          # Drizzle ORM + SQLite
 │   └── shared/      # Shared types
+```
 
 ##  Usage
 ###  Install dependencies
