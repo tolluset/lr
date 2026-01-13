@@ -30,3 +30,6 @@ Thumbs.db
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# Claude Code
+.claude/settings.local.json
