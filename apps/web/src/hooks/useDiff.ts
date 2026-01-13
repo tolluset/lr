@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { gitApi } from "@/lib/api";
 
-export function useFileContent(base: string, head: string, filePath: string) {
+export function useFileContent(base: string, head: string, filePath: string, repoPath?: string) {
   return useQuery({
-    queryKey: ["fileContent", base, head, filePath],
-    queryFn: () => gitApi.getFileContent(base, head, filePath),
+    queryKey: ["fileContent", base, head, filePath, repoPath],
+    queryFn: () => gitApi.getFileContent(base, head, filePath, repoPath),
     enabled: !!base && !!head && !!filePath,
   });
 }
 
-export function useRawDiff(base: string, head: string, filePath?: string) {
+export function useRawDiff(base: string, head: string, filePath?: string, repoPath?: string) {
   return useQuery({
-    queryKey: ["rawDiff", base, head, filePath],
-    queryFn: () => gitApi.getRawDiff(base, head, filePath),
+    queryKey: ["rawDiff", base, head, filePath, repoPath],
+    queryFn: () => gitApi.getRawDiff(base, head, filePath, repoPath),
     enabled: !!base && !!head,
   });
 }

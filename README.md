@@ -26,9 +26,23 @@ local-review/
 │   └── shared/      # Shared types
 ```
 
-##  Usage
-###  Install dependencies
+## Usage
+
+### Install dependencies
+```bash
 pnpm install
+```
+
+### Rebuild better-sqlite3 (Node.js v24+ 사용 시 필수)
+Node.js v24 이상에서는 better-sqlite3의 prebuilt 바이너리가 제공되지 않아 직접 컴파일이 필요함.
+
+```bash
+# node-gyp 글로벌 설치 (없는 경우)
+pnpm add -g node-gyp
+
+# better-sqlite3 네이티브 바이너리 빌드 (프로젝트 루트에서 실행)
+node-gyp rebuild -C node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3
+```
 
 ### Run DB migrations (execute from the git repository root)
 DATABASE_URL=./.local-review.db pnpm --filter @local-review/db migrate

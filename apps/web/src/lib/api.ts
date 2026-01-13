@@ -36,32 +36,37 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 
 // Git API
 export const gitApi = {
-  getBranches: () => fetchJson<BranchInfo>("/git/branches"),
+  getBranches: (repoPath?: string) =>
+    fetchJson<BranchInfo>(`/git/branches${repoPath ? `?repoPath=${encodeURIComponent(repoPath)}` : ""}`),
 
-  getDiff: (base: string, head: string) =>
-    fetchJson<{ files: DiffFile[] }>(`/git/diff?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}`),
+  getDiff: (base: string, head: string, repoPath?: string) =>
+    fetchJson<{ files: DiffFile[] }>(
+      `/git/diff?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}${repoPath ? `&repoPath=${encodeURIComponent(repoPath)}` : ""}`
+    ),
 
-  getFileContent: (base: string, head: string, path: string) =>
+  getFileContent: (base: string, head: string, path: string, repoPath?: string) =>
     fetchJson<FileContent>(
-      `/git/diff/file?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}&path=${encodeURIComponent(path)}`
+      `/git/diff/file?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}&path=${encodeURIComponent(path)}${repoPath ? `&repoPath=${encodeURIComponent(repoPath)}` : ""}`
     ),
 
-  getRawDiff: (base: string, head: string, path?: string) =>
+  getRawDiff: (base: string, head: string, path?: string, repoPath?: string) =>
     fetchJson<{ diff: string }>(
-      `/git/diff/raw?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}${path ? `&path=${encodeURIComponent(path)}` : ""}`
+      `/git/diff/raw?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}${path ? `&path=${encodeURIComponent(path)}` : ""}${repoPath ? `&repoPath=${encodeURIComponent(repoPath)}` : ""}`
     ),
 
-  getCommits: (base: string, head: string) =>
+  getCommits: (base: string, head: string, repoPath?: string) =>
     fetchJson<{ commits: CommitInfo[] }>(
-      `/git/commits?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}`
+      `/git/commits?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}${repoPath ? `&repoPath=${encodeURIComponent(repoPath)}` : ""}`
     ),
 
-  getWorkingChanges: () =>
-    fetchJson<{ staged: DiffFile[]; unstaged: DiffFile[] }>("/git/working-changes"),
+  getWorkingChanges: (repoPath?: string) =>
+    fetchJson<{ staged: DiffFile[]; unstaged: DiffFile[] }>(
+      `/git/working-changes${repoPath ? `?repoPath=${encodeURIComponent(repoPath)}` : ""}`
+    ),
 
-  getWorkingDiff: (type: "staged" | "unstaged", path?: string) =>
+  getWorkingDiff: (type: "staged" | "unstaged", path?: string, repoPath?: string) =>
     fetchJson<{ diff: string }>(
-      `/git/working-diff?type=${type}${path ? `&path=${encodeURIComponent(path)}` : ""}`
+      `/git/working-diff?type=${type}${path ? `&path=${encodeURIComponent(path)}` : ""}${repoPath ? `&repoPath=${encodeURIComponent(repoPath)}` : ""}`
     ),
 };
 

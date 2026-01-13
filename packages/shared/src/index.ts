@@ -63,6 +63,7 @@ export interface SessionWithStats {
 
 // Request types
 export interface CreateSessionRequest {
+  repositoryPath: string;
   baseBranch: string;
   title?: string;
   description?: string;

@@ -7,7 +7,6 @@ import { createGitRoutes } from "./routes/git.js";
 import { createSessionRoutes } from "./routes/sessions.js";
 import { createCommentRoutes } from "./routes/comments.js";
 import { createFileRoutes } from "./routes/files.js";
-import { GitService } from "./services/git.service.js";
 
 function getGitRoot(): string {
   try {
@@ -20,28 +19,27 @@ function getGitRoot(): string {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Repository path - git root or specified via env
-const REPO_PATH = process.env.REPO_PATH || getGitRoot();
-const DB_PATH = process.env.DATABASE_URL || path.join(REPO_PATH, ".local-review.db");
+// Default repository path - git root or specified via env
+const DEFAULT_REPO_PATH = process.env.REPO_PATH || getGitRoot();
+const DB_PATH = process.env.DATABASE_URL || path.join(DEFAULT_REPO_PATH, ".local-review.db");
 
 // Initialize services
 const db = createDb(DB_PATH);
-const gitService = new GitService(REPO_PATH);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/git", createGitRoutes(gitService));
-app.use("/api/sessions", createSessionRoutes(db, gitService, REPO_PATH));
+app.use("/api/git", createGitRoutes(DEFAULT_REPO_PATH));
+app.use("/api/sessions", createSessionRoutes(db));
 app.use("/api/sessions", createCommentRoutes(db));
 app.use("/api/sessions", createFileRoutes(db));
 app.use("/api/comments", createCommentRoutes(db));
 
 // Health check
 app.get("/api/health", (_, res) => {
-  res.json({ status: "ok", repoPath: REPO_PATH });
+  res.json({ status: "ok", defaultRepoPath: DEFAULT_REPO_PATH });
 });
 
 // Error handler
@@ -52,5 +50,5 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
-  console.log(`Repository: ${REPO_PATH}`);
+  console.log(`Default Repository: ${DEFAULT_REPO_PATH}`);
 });

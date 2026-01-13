@@ -201,6 +201,7 @@ export function SessionPage() {
               baseCommit={session.baseCommit}
               headCommit={session.headCommit}
               file={currentFile}
+              repositoryPath={session.repositoryPath}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">

@@ -217,3 +217,15 @@ export class GitService {
     return { staged, unstaged };
   }
 }
+
+// GitService 인스턴스 캐시 (경로별)
+const gitServiceCache = new Map<string, GitService>();
+
+export function getGitService(repoPath: string): GitService {
+  let service = gitServiceCache.get(repoPath);
+  if (!service) {
+    service = new GitService(repoPath);
+    gitServiceCache.set(repoPath, service);
+  }
+  return service;
+}

@@ -8,10 +8,10 @@ import {
   lineComments,
   activityLogs,
 } from "@local-review/db";
-import type { GitService } from "../services/git.service.js";
+import { getGitService } from "../services/git.service.js";
 import type { CreateSessionRequest, UpdateSessionRequest } from "@local-review/shared";
 
-export function createSessionRoutes(db: Db, gitService: GitService, repoPath: string) {
+export function createSessionRoutes(db: Db) {
   const router = Router();
 
   // GET /api/sessions - List all sessions
@@ -73,11 +73,17 @@ export function createSessionRoutes(db: Db, gitService: GitService, repoPath: st
   router.post("/", async (req, res) => {
     try {
       const body: CreateSessionRequest = req.body;
-      const { baseBranch, title, description } = body;
+      const { repositoryPath, baseBranch, title, description } = body;
 
+      if (!repositoryPath) {
+        return res.status(400).json({ error: "repositoryPath is required" });
+      }
       if (!baseBranch) {
         return res.status(400).json({ error: "baseBranch is required" });
       }
+
+      // Get GitService for the specified repository
+      const gitService = getGitService(repositoryPath);
 
       // Get current branch and commit hashes
       const headBranch = await gitService.getCurrentBranch();
@@ -89,7 +95,7 @@ export function createSessionRoutes(db: Db, gitService: GitService, repoPath: st
 
       await db.insert(reviewSessions).values({
         id: sessionId,
-        repositoryPath: repoPath,
+        repositoryPath,
         baseBranch,
         headBranch,
         baseCommit,
@@ -157,6 +163,9 @@ export function createSessionRoutes(db: Db, gitService: GitService, repoPath: st
       if (!session) {
         return res.status(404).json({ error: "Session not found" });
       }
+
+      // Get GitService for the session's repository
+      const gitService = getGitService(session.repositoryPath);
 
       // Get files with status
       const files = await db

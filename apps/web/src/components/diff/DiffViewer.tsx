@@ -20,16 +20,17 @@ interface DiffViewerProps {
   baseCommit: string;
   headCommit: string;
   file: DiffFile & { reviewStatus: string };
+  repositoryPath: string;
 }
 
-export function DiffViewer({ sessionId, baseCommit, headCommit, file }: DiffViewerProps) {
+export function DiffViewer({ sessionId, baseCommit, headCommit, file, repositoryPath }: DiffViewerProps) {
   const [layout, setLayout] = useState<"split" | "unified">("split");
   const [selectedLine, setSelectedLine] = useState<{
     side: "old" | "new";
     lineNumber: number;
   } | null>(null);
 
-  const { data: diffData, isLoading } = useRawDiff(baseCommit, headCommit, file.path);
+  const { data: diffData, isLoading } = useRawDiff(baseCommit, headCommit, file.path, repositoryPath);
   const { data: comments = [] } = useComments(sessionId, file.path);
   const createComment = useCreateComment(sessionId);
   const deleteComment = useDeleteComment(sessionId);

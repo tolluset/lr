@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -27,17 +27,27 @@ interface CreateSessionDialogProps {
 
 export function CreateSessionDialog({ open, onOpenChange }: CreateSessionDialogProps) {
   const navigate = useNavigate();
-  const { data: branches, isLoading: branchesLoading } = useBranches();
   const createSession = useCreateSession();
 
+  const [repositoryPath, setRepositoryPath] = useState("");
   const [baseBranch, setBaseBranch] = useState("main");
   const [title, setTitle] = useState("");
 
+  const { data: branches, isLoading: branchesLoading, error: branchesError } = useBranches(repositoryPath);
   const currentBranch = branches?.current || "HEAD";
 
+  // baseBranch가 유효한 브랜치인지 확인하고 아니면 첫 번째 브랜치로 설정
+  useEffect(() => {
+    if (branches?.all.length && !branches.all.includes(baseBranch)) {
+      setBaseBranch(branches.all[0]);
+    }
+  }, [branches, baseBranch]);
+
   const handleCreate = async () => {
+    if (!repositoryPath) return;
     try {
       const session = await createSession.mutateAsync({
+        repositoryPath,
         baseBranch,
         title: title || undefined,
       });
@@ -48,6 +58,8 @@ export function CreateSessionDialog({ open, onOpenChange }: CreateSessionDialogP
     }
   };
 
+  const isValidRepo = branches && !branchesError;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -57,11 +69,25 @@ export function CreateSessionDialog({ open, onOpenChange }: CreateSessionDialogP
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
+            <Label>Repository Path</Label>
+            <Input
+              value={repositoryPath}
+              onChange={(e) => setRepositoryPath(e.target.value)}
+              placeholder="/path/to/git/repository"
+            />
+            {branchesError && repositoryPath && (
+              <p className="text-sm text-destructive">
+                Invalid git repository path
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
             <Label>Base Branch</Label>
             <Select
               value={baseBranch}
               onValueChange={setBaseBranch}
-              disabled={branchesLoading}
+              disabled={branchesLoading || !isValidRepo}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select base branch" />
@@ -95,7 +121,10 @@ export function CreateSessionDialog({ open, onOpenChange }: CreateSessionDialogP
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleCreate} disabled={createSession.isPending}>
+          <Button
+            onClick={handleCreate}
+            disabled={createSession.isPending || !isValidRepo || !repositoryPath}
+          >
             {createSession.isPending ? "Creating..." : "Start Review"}
           </Button>
         </DialogFooter>
