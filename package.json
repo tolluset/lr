@@ -2,7 +2,7 @@
   "name": "local-review",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=@local-review/web --filter=@local-review/server",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "db:generate": "pnpm --filter @local-review/db generate",

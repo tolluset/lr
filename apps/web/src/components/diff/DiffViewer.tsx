@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { PatchDiff } from "@pierre/diffs/react";
-import { MessageSquarePlus, Columns, Rows } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Columns, Rows } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { CommentForm } from "@/components/comment/CommentForm";
-import { CommentThread } from "@/components/comment/CommentThread";
+import { LineHoverButton } from "./LineHoverButton";
+import { InlineCommentThread } from "./InlineCommentThread";
 import { useRawDiff } from "@/hooks/useDiff";
 import {
   useComments,
@@ -13,6 +13,7 @@ import {
   useToggleResolve,
 } from "@/hooks/useComments";
 import type { DiffFile } from "@local-review/shared";
+import type { LineComment } from "@/lib/api";
 
 interface DiffViewerProps {
   sessionId: string;
@@ -62,6 +63,38 @@ export function DiffViewer({ sessionId, baseCommit, headCommit, file }: DiffView
     });
   };
 
+  const handleLineSelect = useCallback(
+    (line: { lineNumber: number; side: "old" | "new" }) => {
+      setSelectedLine(line);
+    },
+    []
+  );
+
+  // Group comments by line for lineAnnotations
+  const lineAnnotations = useMemo(() => {
+    const grouped = new Map<string, LineComment[]>();
+    comments.forEach((comment) => {
+      const key = `${comment.side}-${comment.lineNumber}`;
+      const existing = grouped.get(key) || [];
+      grouped.set(key, [...existing, comment]);
+    });
+
+    return Array.from(grouped.entries()).map(([_key, lineComments]) => {
+      const rootComment = lineComments.find((c) => !c.parentId);
+      if (!rootComment) return null;
+
+      return {
+        side: rootComment.side === "new" ? "additions" : "deletions",
+        lineNumber: rootComment.lineNumber,
+        metadata: lineComments,
+      };
+    }).filter(Boolean) as Array<{
+      side: "additions" | "deletions";
+      lineNumber: number;
+      metadata: LineComment[];
+    }>;
+  }, [comments]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64 text-muted-foreground">
@@ -107,60 +140,51 @@ export function DiffViewer({ sessionId, baseCommit, headCommit, file }: DiffView
       </div>
 
       {/* Diff content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto relative">
         <div className="min-w-fit">
           <PatchDiff
             patch={diffData.diff}
             options={{
               diffStyle: layout,
+              enableHoverUtility: true,
+              onLineNumberClick: ({ lineNumber, annotationSide }) => {
+                handleLineSelect({
+                  lineNumber,
+                  side: annotationSide === "additions" ? "new" : "old",
+                });
+              },
             }}
+            lineAnnotations={lineAnnotations}
+            renderAnnotation={({ metadata }) => (
+              <InlineCommentThread
+                comments={metadata}
+                onResolve={(id) => toggleResolve.mutate(id)}
+                onDelete={(id) => deleteComment.mutate(id)}
+                onReply={handleReply}
+              />
+            )}
+            renderHoverUtility={(getHoveredLine) => (
+              <LineHoverButton
+                getHoveredLine={getHoveredLine}
+                onAddComment={handleLineSelect}
+              />
+            )}
           />
         </div>
 
-        {/* Comments section */}
-        {(comments.length > 0 || selectedLine) && (
-          <div className="border-t p-4 space-y-4 bg-background">
-            <div className="flex items-center gap-2">
-              <MessageSquarePlus className="h-4 w-4" />
-              <span className="font-medium text-sm">
-                Comments ({comments.filter((c) => !c.parentId).length})
-              </span>
+        {/* Add comment form */}
+        {selectedLine && (
+          <div className="sticky bottom-0 left-0 right-0 border-t p-4 bg-background shadow-lg">
+            <div className="text-xs text-muted-foreground mb-2">
+              Adding comment to line {selectedLine.lineNumber} ({selectedLine.side})
             </div>
-
-            <CommentThread
-              comments={comments}
-              onResolve={(id) => toggleResolve.mutate(id)}
-              onDelete={(id) => deleteComment.mutate(id)}
-              onReply={handleReply}
+            <CommentForm
+              onSubmit={handleAddComment}
+              onCancel={() => setSelectedLine(null)}
             />
-
-            {selectedLine && (
-              <div>
-                <div className="text-xs text-muted-foreground mb-2">
-                  Adding comment to line {selectedLine.lineNumber} ({selectedLine.side})
-                </div>
-                <CommentForm
-                  onSubmit={handleAddComment}
-                  onCancel={() => setSelectedLine(null)}
-                />
-              </div>
-            )}
           </div>
         )}
       </div>
-
-      {/* Add comment floating button */}
-      {!selectedLine && (
-        <div className="absolute bottom-4 right-4">
-          <Button
-            onClick={() => setSelectedLine({ side: "new", lineNumber: 1 })}
-            className="shadow-lg"
-          >
-            <MessageSquarePlus className="h-4 w-4 mr-2" />
-            Add Comment
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

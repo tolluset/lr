@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   GitBranch,
   Check,
   MessageSquare,
   FileText,
+  PanelLeft,
+  PanelLeftClose,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -19,12 +23,21 @@ import { FileTree } from "@/components/diff/FileTree";
 import { DiffViewer } from "@/components/diff/DiffViewer";
 import { useSession, useUpdateSession } from "@/hooks/useSessions";
 import { useUpdateFileStatus } from "@/hooks/useFileStatus";
+import { useSidebarResize } from "@/hooks/useSidebarResize";
 
 export function SessionPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: session, isLoading, error } = useSession(id!);
   const updateSession = useUpdateSession();
   const updateFileStatus = useUpdateFileStatus(id!);
+  const {
+    width: sidebarWidth,
+    isCollapsed,
+    isResizing,
+    toggle: toggleSidebar,
+    startResize,
+  } = useSidebarResize();
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
@@ -42,6 +55,14 @@ export function SessionPage() {
 
   const handleStatusChange = (status: "active" | "completed" | "archived") => {
     updateSession.mutate({ id: id!, data: { status } });
+  };
+
+  const handleCompleteReview = async () => {
+    await updateSession.mutateAsync({ id: id!, data: { status: "completed" } });
+    toast.success("리뷰가 완료되었습니다!", {
+      description: `${session?.filesTotal}개 파일 리뷰 완료`,
+    });
+    navigate("/");
   };
 
   if (isLoading) {
@@ -77,6 +98,18 @@ export function SessionPage() {
             <Link to="/">
               <ArrowLeft className="h-4 w-4" />
             </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            title={isCollapsed ? "Show sidebar (Cmd+B)" : "Hide sidebar (Cmd+B)"}
+          >
+            {isCollapsed ? (
+              <PanelLeft className="h-4 w-4" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4" />
+            )}
           </Button>
           <div>
             <h1 className="font-semibold">
@@ -121,7 +154,7 @@ export function SessionPage() {
 
           {/* Complete review button */}
           {session.status === "active" && session.filesReviewed === session.filesTotal && (
-            <Button onClick={() => handleStatusChange("completed")}>
+            <Button onClick={handleCompleteReview}>
               <Check className="h-4 w-4 mr-2" />
               Complete Review
             </Button>
@@ -132,14 +165,33 @@ export function SessionPage() {
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden">
         {/* File tree sidebar */}
-        <aside className="w-72 border-r shrink-0 overflow-hidden">
-          <FileTree
-            files={session.files}
-            selectedFile={selectedFile}
-            onFileSelect={setSelectedFile}
-            onFileReviewed={handleFileReviewed}
-          />
+        <aside
+          className={cn(
+            "border-r shrink-0 overflow-hidden transition-all duration-200",
+            isResizing && "transition-none"
+          )}
+          style={{ width: sidebarWidth }}
+        >
+          {!isCollapsed && (
+            <FileTree
+              files={session.files}
+              selectedFile={selectedFile}
+              onFileSelect={setSelectedFile}
+              onFileReviewed={handleFileReviewed}
+            />
+          )}
         </aside>
+
+        {/* Resize handle */}
+        {!isCollapsed && (
+          <div
+            className={cn(
+              "w-1 shrink-0 cursor-col-resize transition-colors hover:bg-primary/50",
+              isResizing && "bg-primary/50"
+            )}
+            onMouseDown={startResize}
+          />
+        )}
 
         {/* Diff viewer */}
         <main className="flex-1 overflow-hidden relative">

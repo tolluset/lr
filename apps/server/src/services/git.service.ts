@@ -125,4 +125,95 @@ export class GitService {
       return false;
     }
   }
+
+  async getStagedFiles(): Promise<DiffFile[]> {
+    const diffSummary = await this.git.diffSummary(["--cached"]);
+
+    return diffSummary.files.map((file) => {
+      const textFile = file as DiffResultTextFile;
+      let status: DiffFile["status"] = "modified";
+
+      if ("binary" in file && file.binary) {
+        return {
+          path: file.file,
+          status: "modified" as const,
+          additions: 0,
+          deletions: 0,
+          binary: true,
+        };
+      }
+
+      if (textFile.insertions > 0 && textFile.deletions === 0) {
+        status = "added";
+      } else if (textFile.deletions > 0 && textFile.insertions === 0) {
+        status = "deleted";
+      }
+
+      return {
+        path: file.file,
+        status,
+        additions: textFile.insertions || 0,
+        deletions: textFile.deletions || 0,
+      };
+    });
+  }
+
+  async getUnstagedFiles(): Promise<DiffFile[]> {
+    const diffSummary = await this.git.diffSummary();
+
+    return diffSummary.files.map((file) => {
+      const textFile = file as DiffResultTextFile;
+      let status: DiffFile["status"] = "modified";
+
+      if ("binary" in file && file.binary) {
+        return {
+          path: file.file,
+          status: "modified" as const,
+          additions: 0,
+          deletions: 0,
+          binary: true,
+        };
+      }
+
+      if (textFile.insertions > 0 && textFile.deletions === 0) {
+        status = "added";
+      } else if (textFile.deletions > 0 && textFile.insertions === 0) {
+        status = "deleted";
+      }
+
+      return {
+        path: file.file,
+        status,
+        additions: textFile.insertions || 0,
+        deletions: textFile.deletions || 0,
+      };
+    });
+  }
+
+  async getStagedDiff(filePath?: string): Promise<string> {
+    const args = ["--cached"];
+    if (filePath) {
+      args.push("--", filePath);
+    }
+    return await this.git.diff(args);
+  }
+
+  async getUnstagedDiff(filePath?: string): Promise<string> {
+    const args: string[] = [];
+    if (filePath) {
+      args.push("--", filePath);
+    }
+    return await this.git.diff(args);
+  }
+
+  async getWorkingChanges(): Promise<{
+    staged: DiffFile[];
+    unstaged: DiffFile[];
+  }> {
+    const [staged, unstaged] = await Promise.all([
+      this.getStagedFiles(),
+      this.getUnstagedFiles(),
+    ]);
+    return { staged, unstaged };
+  }
 }

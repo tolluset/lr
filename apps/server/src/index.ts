@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
+import { execSync } from "child_process";
 import { createDb } from "@local-review/db";
 import { createGitRoutes } from "./routes/git.js";
 import { createSessionRoutes } from "./routes/sessions.js";
@@ -8,11 +9,19 @@ import { createCommentRoutes } from "./routes/comments.js";
 import { createFileRoutes } from "./routes/files.js";
 import { GitService } from "./services/git.service.js";
 
+function getGitRoot(): string {
+  try {
+    return execSync("git rev-parse --show-toplevel", { encoding: "utf-8" }).trim();
+  } catch {
+    return process.cwd();
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Repository path - current working directory or specified via env
-const REPO_PATH = process.env.REPO_PATH || process.cwd();
+// Repository path - git root or specified via env
+const REPO_PATH = process.env.REPO_PATH || getGitRoot();
 const DB_PATH = process.env.DATABASE_URL || path.join(REPO_PATH, ".local-review.db");
 
 // Initialize services

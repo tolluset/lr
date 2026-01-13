@@ -55,6 +55,14 @@ export const gitApi = {
     fetchJson<{ commits: CommitInfo[] }>(
       `/git/commits?base=${encodeURIComponent(base)}&head=${encodeURIComponent(head)}`
     ),
+
+  getWorkingChanges: () =>
+    fetchJson<{ staged: DiffFile[]; unstaged: DiffFile[] }>("/git/working-changes"),
+
+  getWorkingDiff: (type: "staged" | "unstaged", path?: string) =>
+    fetchJson<{ diff: string }>(
+      `/git/working-diff?type=${type}${path ? `&path=${encodeURIComponent(path)}` : ""}`
+    ),
 };
 
 // Session API

@@ -1,9 +1,70 @@
 import { useState } from "react";
-import { Plus, GitBranch } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Plus, GitBranch, FolderEdit } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SessionCard } from "@/components/session/SessionCard";
 import { CreateSessionDialog } from "@/components/session/CreateSessionDialog";
 import { useSessions } from "@/hooks/useSessions";
+import { useWorkingChanges } from "@/hooks/useWorkingChanges";
+
+function WorkingChangesCard() {
+  const { data: changes, isLoading } = useWorkingChanges();
+
+  if (isLoading) {
+    return (
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FolderEdit className="h-5 w-5" />
+            Working Changes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-muted-foreground text-sm">Loading...</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const stagedCount = changes?.staged.length || 0;
+  const unstagedCount = changes?.unstaged.length || 0;
+  const totalChanges = stagedCount + unstagedCount;
+
+  if (totalChanges === 0) {
+    return null;
+  }
+
+  return (
+    <Card className="mb-8 hover:border-primary/50 transition-colors">
+      <Link to="/working">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FolderEdit className="h-5 w-5" />
+            Working Changes
+          </CardTitle>
+          <CardDescription>
+            {totalChanges} file{totalChanges !== 1 ? "s" : ""} with uncommitted changes
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4 text-sm">
+            {stagedCount > 0 && (
+              <span className="text-green-500">
+                {stagedCount} staged
+              </span>
+            )}
+            {unstagedCount > 0 && (
+              <span className="text-yellow-500">
+                {unstagedCount} unstaged
+              </span>
+            )}
+          </div>
+        </CardContent>
+      </Link>
+    </Card>
+  );
+}
 
 export function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -27,6 +88,9 @@ export function HomePage() {
 
       {/* Main content */}
       <main className="container mx-auto px-4 py-8">
+        {/* Working Changes Card */}
+        <WorkingChangesCard />
+
         {isLoading ? (
           <div className="text-center text-muted-foreground py-12">Loading...</div>
         ) : error ? (

@@ -102,5 +102,35 @@ export function createGitRoutes(gitService: GitService) {
     }
   });
 
+  // GET /api/git/working-changes
+  router.get("/working-changes", async (_, res) => {
+    try {
+      const changes = await gitService.getWorkingChanges();
+      res.json(changes);
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
+  // GET /api/git/working-diff?type=staged|unstaged&path=
+  router.get("/working-diff", async (req, res) => {
+    try {
+      const { type, path: filePath } = req.query;
+
+      if (!type || (type !== "staged" && type !== "unstaged")) {
+        return res.status(400).json({ error: "type must be 'staged' or 'unstaged'" });
+      }
+
+      const diff =
+        type === "staged"
+          ? await gitService.getStagedDiff(filePath as string | undefined)
+          : await gitService.getUnstagedDiff(filePath as string | undefined);
+
+      res.json({ diff });
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
   return router;
 }
