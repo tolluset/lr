@@ -1,0 +1,15 @@
+{
+  "name": "local-review",
+  "version": "0.1.0",
+  "description": "Local code review system - Git diff-based AI + human collaborative code review",
+  "author": {
+    "name": "Byonghun Lee"
+  },
+  "homepage": "https://github.com/tolluset/local-review",
+  "repository": "https://github.com/tolluset/local-review",
+  "license": "MIT",
+  "keywords": ["code-review", "git", "diff", "local", "ai-review"],
+  "mcpServers": "./mcp.json",
+  "hooks": "./hooks/hooks.json",
+  "commands": "./commands"
+}

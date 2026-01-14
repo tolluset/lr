@@ -1,6 +1,14 @@
 {
   "name": "local-review",
-  "private": true,
+  "version": "0.1.0",
+  "description": "Local code review system - Git diff-based AI + human collaborative code review",
+  "keywords": ["claude-code-plugin", "code-review", "git", "mcp"],
+  "author": "Byonghun Lee",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tolluset/local-review"
+  },
   "scripts": {
     "dev": "turbo run dev --filter=@local-review/web --filter=@local-review/server",
     "build": "turbo run build",

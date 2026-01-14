@@ -1,63 +1,63 @@
 ---
 name: bug-fix
-description: "버그 수정. '버그', 'bug', '에러', '오류', '안돼', '작동 안함', 'fix' 요청 시 사용"
+description: "Bug fixing. Use for 'bug', 'error', 'not working', 'fix' requests"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Task
 ---
 
 # Bug Fix Skill
 
-## 역할
+## Role
 
-버그를 분석하고 수정하는 디버거
+Debugger who analyzes and fixes bugs
 
-## 디버깅 프로세스
+## Debugging Process
 
-### 1. 문제 재현
-- 버그 발생 조건 파악
-- 에러 메시지 확인
-- 관련 로그 분석
+### 1. Reproduce the Problem
+- Identify bug occurrence conditions
+- Check error messages
+- Analyze related logs
 
-### 2. 원인 분석
-- 스택 트레이스 추적
-- 관련 코드 검토
-- 데이터 흐름 확인
+### 2. Root Cause Analysis
+- Trace stack trace
+- Review related code
+- Check data flow
 
-### 3. 영향 범위 파악
-- 해당 코드를 사용하는 다른 부분 확인
-- 수정 시 사이드 이펙트 예측
+### 3. Impact Assessment
+- Check other parts using this code
+- Predict side effects of the fix
 
-### 4. 수정 및 검증
-- 최소한의 변경으로 수정
-- 엣지 케이스 고려
-- 타입 체크 통과 확인
+### 4. Fix and Verify
+- Fix with minimal changes
+- Consider edge cases
+- Ensure type check passes
 
-## 일반적인 버그 유형
+## Common Bug Types
 
 ### Frontend (apps/web)
-| 증상 | 가능한 원인 |
-|------|-------------|
-| 무한 리렌더링 | useEffect 의존성 배열 오류 |
-| 데이터 안 보임 | React Query 키 불일치, API 경로 오류 |
-| 상태 안 바뀜 | 불변성 위반, 잘못된 상태 업데이트 |
-| 타입 에러 | packages/shared 타입 불일치 |
+| Symptom | Possible Cause |
+|---------|----------------|
+| Infinite re-render | useEffect dependency array error |
+| Data not showing | React Query key mismatch, API path error |
+| State not updating | Immutability violation, wrong state update |
+| Type error | packages/shared type mismatch |
 
 ### Backend (apps/server)
-| 증상 | 가능한 원인 |
-|------|-------------|
-| 500 에러 | 예외 처리 누락, DB 쿼리 오류 |
-| 404 에러 | 라우트 미등록, 경로 오타 |
-| CORS 에러 | CORS 설정 누락 |
-| 데이터 불일치 | 스키마-타입 불일치 |
+| Symptom | Possible Cause |
+|---------|----------------|
+| 500 error | Missing exception handling, DB query error |
+| 404 error | Route not registered, path typo |
+| CORS error | Missing CORS configuration |
+| Data mismatch | Schema-type mismatch |
 
 ### Database (packages/db)
-| 증상 | 가능한 원인 |
-|------|-------------|
-| 마이그레이션 실패 | 스키마 문법 오류 |
-| 쿼리 에러 | 잘못된 관계 정의 |
+| Symptom | Possible Cause |
+|---------|----------------|
+| Migration failed | Schema syntax error |
+| Query error | Wrong relation definition |
 
-## 수정 원칙
+## Fix Principles
 
-1. **최소 변경** - 버그와 직접 관련된 부분만 수정
-2. **원인 해결** - 증상이 아닌 근본 원인 해결
-3. **회귀 방지** - 다른 기능에 영향 없는지 확인
-4. **문서화** - 수정 내용과 이유 설명
+1. **Minimal change** - Only modify parts directly related to the bug
+2. **Fix root cause** - Solve the root cause, not symptoms
+3. **Prevent regression** - Verify no impact on other features
+4. **Document** - Explain what was fixed and why

@@ -1,48 +1,48 @@
 ---
 name: api-designer
-description: "API 설계 및 구현. 'API', '엔드포인트', 'endpoint', '라우트', 'route' 요청 시 사용"
+description: "API design and implementation. Use for 'API', 'endpoint', 'route' requests"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Task
 ---
 
 # API Designer Skill
 
-## 역할
+## Role
 
-RESTful API를 설계하고 구현하는 백엔드 개발자
+Backend developer who designs and implements RESTful APIs
 
-## API 설계 원칙
+## API Design Principles
 
-### RESTful 규칙
-| 메서드 | 용도 | 경로 패턴 |
-|--------|------|-----------|
-| GET | 조회 | `/api/resources`, `/api/resources/:id` |
-| POST | 생성 | `/api/resources` |
-| PATCH | 부분 수정 | `/api/resources/:id` |
-| PUT | 전체 교체 | `/api/resources/:id` |
-| DELETE | 삭제 | `/api/resources/:id` |
+### RESTful Rules
+| Method | Purpose | Path Pattern |
+|--------|---------|--------------|
+| GET | Retrieve | `/api/resources`, `/api/resources/:id` |
+| POST | Create | `/api/resources` |
+| PATCH | Partial update | `/api/resources/:id` |
+| PUT | Full replace | `/api/resources/:id` |
+| DELETE | Delete | `/api/resources/:id` |
 
-### 응답 형식
+### Response Format
 ```typescript
-// 성공
+// Success
 { data: T }
 { data: T[], total?: number }
 
-// 에러
+// Error
 { error: string, details?: unknown }
 ```
 
-### HTTP 상태 코드
-| 코드 | 용도 |
-|------|------|
-| 200 | 성공 |
-| 201 | 생성 성공 |
-| 400 | 잘못된 요청 |
-| 404 | 리소스 없음 |
-| 500 | 서버 에러 |
+### HTTP Status Codes
+| Code | Purpose |
+|------|---------|
+| 200 | Success |
+| 201 | Created |
+| 400 | Bad request |
+| 404 | Not found |
+| 500 | Server error |
 
-## 구현 순서
+## Implementation Order
 
-### 1. 타입 정의 (packages/shared)
+### 1. Type Definition (packages/shared)
 ```typescript
 // packages/shared/src/index.ts
 export type CreateFeatureRequest = {
@@ -58,7 +58,7 @@ export type FeatureResponse = {
 };
 ```
 
-### 2. DB 스키마 (필요시)
+### 2. DB Schema (if needed)
 ```typescript
 // packages/db/src/schema.ts
 export const features = sqliteTable('features', {
@@ -69,7 +69,7 @@ export const features = sqliteTable('features', {
 });
 ```
 
-### 3. 라우트 구현
+### 3. Route Implementation
 ```typescript
 // apps/server/src/routes/features.ts
 import { Router } from 'express';
@@ -115,14 +115,14 @@ router.post('/', async (req, res) => {
 export default router;
 ```
 
-### 4. 라우트 등록
+### 4. Register Route
 ```typescript
 // apps/server/src/index.ts
 import featuresRouter from './routes/features';
 app.use('/api/features', featuresRouter);
 ```
 
-### 5. 프론트엔드 API 클라이언트
+### 5. Frontend API Client
 ```typescript
 // apps/web/src/lib/api.ts
 export const featureApi = {
@@ -135,10 +135,10 @@ export const featureApi = {
 };
 ```
 
-## 기존 API 참고
+## Existing API Reference
 
-현재 프로젝트의 API 구조:
-- `GET /api/git/branches` - 브랜치 목록
-- `GET/POST /api/sessions` - 세션 CRUD
-- `GET/POST /api/sessions/:id/comments` - 코멘트
-- `PATCH /api/sessions/:id/files/*/status` - 파일 상태
+Current project API structure:
+- `GET /api/git/branches` - Branch list
+- `GET/POST /api/sessions` - Session CRUD
+- `GET/POST /api/sessions/:id/comments` - Comments
+- `PATCH /api/sessions/:id/files/*/status` - File status

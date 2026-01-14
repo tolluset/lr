@@ -1,0 +1,23 @@
+{
+  "name": "local-review",
+  "owner": {
+    "name": "Byonghun Lee"
+  },
+  "plugins": [
+    {
+      "name": "local-review",
+      "source": {
+        "source": "github",
+        "repo": "tolluset/local-review"
+      },
+      "description": "Local code review system - Git diff based AI + Human collaborative code review",
+      "version": "0.1.0",
+      "author": {
+        "name": "Byonghun Lee"
+      },
+      "homepage": "https://github.com/tolluset/local-review",
+      "repository": "https://github.com/tolluset/local-review",
+      "license": "MIT"
+    }
+  ]
+}

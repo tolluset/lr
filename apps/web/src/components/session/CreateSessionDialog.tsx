@@ -36,7 +36,7 @@ export function CreateSessionDialog({ open, onOpenChange }: CreateSessionDialogP
   const { data: branches, isLoading: branchesLoading, error: branchesError } = useBranches(repositoryPath);
   const currentBranch = branches?.current || "HEAD";
 
-  // baseBranch가 유효한 브랜치인지 확인하고 아니면 첫 번째 브랜치로 설정
+  // Check if baseBranch is valid, otherwise set to first branch
   useEffect(() => {
     if (branches?.all.length && !branches.all.includes(baseBranch)) {
       setBaseBranch(branches.all[0]);

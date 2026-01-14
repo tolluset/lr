@@ -1,9 +1,8 @@
-# lr(local-review)
+# local-review
 
 ![Demo Screenshot](images/demo.png)
 
-
-Simple code reviewer in local
+Local code review system - Git diff based AI + Human collaborative code review
 
 ## Key Features
 
@@ -13,47 +12,98 @@ Simple code reviewer in local
 - File Review Status – Checkbox to mark each file as reviewed
 - Session Management – Create, list, and update the status of review sessions
 - SQLite Persistence – All data is stored in .local-review.db
+- **MCP Server** – 21 tools for AI to manage sessions, comments, and files
 
-## Project Structure
+## Claude Code Plugin Installation
+
+```bash
+/plugin marketplace add tolluset/local-review
+
+/plugin install local-review
+```
+
+### MCP Tools
+
+| Category | Tool | Description |
+|----------|------|-------------|
+| **Git** | `git:list-branches` | List branches |
+| | `git:get-diff-files` | Get changed files |
+| | `git:get-file-content-diff` | Get file content before/after |
+| | `git:get-commits` | Get commit list |
+| | `git:get-file-content` | Get file content at ref |
+| | `git:get-raw-diff` | Get raw unified diff |
+| | `git:get-working-changes` | Get staged/unstaged files |
+| | `git:get-working-diff` | Get working directory diff |
+| **Sessions** | `sessions:list` | List sessions with stats |
+| | `sessions:create` | Create new session |
+| | `sessions:get` | Get session details + files |
+| | `sessions:update` | Update session |
+| | `sessions:delete` | Delete session |
+| **Comments** | `comments:list` | List comments |
+| | `comments:create` | Create comment |
+| | `comments:update` | Update comment |
+| | `comments:delete` | Delete comment |
+| | `comments:toggle-resolve` | Toggle resolve status |
+| **Files** | `files:list` | List file review status |
+| | `files:update-status` | Update file status |
+| | `activities:list` | List activity logs |
+
+### Usage with Claude
+
+```
+> Review the changes in my current branch
+
+Claude uses MCP tools:
+1. sessions:create - Create review session
+2. git:get-diff-files - Get changed files
+3. git:get-raw-diff - Analyze code changes
+4. comments:create - Write review comments
+```
+
+### AI + Human Collaboration
+
+1. **AI Review**: Claude analyzes code and writes comments via MCP tools
+2. **Human Review**: Review AI comments and add more in web UI
+3. **Collaboration**: Both work in the same session with real-time sync
+
+## Manual Setup (Development)
+
+### Project Structure
 
 ```
 local-review/
 ├── apps/
 │   ├── web/         # React + Vite + Tailwind + shadcn/ui
-│   └── server/      # Express API
+│   ├── server/      # Express API
+│   └── mcp/         # MCP Server (21 tools)
 ├── packages/
 │   ├── db/          # Drizzle ORM + SQLite
 │   └── shared/      # Shared types
 ```
 
-## Usage
-
 ### Install dependencies
+
 ```bash
 pnpm install
 ```
 
-### Rebuild better-sqlite3 (Node.js v24+ 사용 시 필수)
-Node.js v24 이상에서는 better-sqlite3의 prebuilt 바이너리가 제공되지 않아 직접 컴파일이 필요함.
+### Rebuild better-sqlite3 (Required for Node.js v24+)
 
 ```bash
-# node-gyp 글로벌 설치 (없는 경우)
 pnpm add -g node-gyp
-
-# better-sqlite3 네이티브 바이너리 빌드 (프로젝트 루트에서 실행)
 node-gyp rebuild -C node_modules/.pnpm/better-sqlite3@11.10.0/node_modules/better-sqlite3
 ```
 
-### Run DB migrations (execute from the git repository root)
+### Run DB migrations
+
+```bash
 DATABASE_URL=./.local-review.db pnpm --filter @local-review/db migrate
+```
 
-### Start the server
-REPO_PATH=$(pwd) DATABASE_URL=$(pwd)/.local-review.db pnpm --filter @local-review/server dev
+### Start dev server
 
-### Start the web app (in a separate terminal)
-pnpm --filter @local-review/web dev
+```bash
+pnpm dev
+```
 
-
-Open http://localhost:5176
- in your browser.
-You can start a new review session by clicking the “New Review” button.
+Open http://localhost:6777 in your browser.

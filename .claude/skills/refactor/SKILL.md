@@ -1,35 +1,35 @@
 ---
 name: refactor
-description: "코드 리팩토링. '리팩토링', 'refactor', '정리', '개선', '클린업' 요청 시 사용"
+description: "Code refactoring. Use for 'refactor', 'cleanup', 'improve' requests"
 allowed-tools: Read, Write, Edit, Grep, Glob, Task
 ---
 
 # Refactor Skill
 
-## 역할
+## Role
 
-코드 품질을 개선하고 유지보수성을 높이는 리팩토러
+Refactorer who improves code quality and maintainability
 
-## 리팩토링 원칙
+## Refactoring Principles
 
-### 동작 보존
-- 기존 기능은 그대로 유지
-- 외부 인터페이스(API, props) 변경 최소화
-- 점진적 변경
+### Behavior Preservation
+- Keep existing functionality intact
+- Minimize external interface (API, props) changes
+- Make incremental changes
 
-### 단계적 접근
-1. 현재 코드 이해
-2. 테스트 가능하면 테스트 작성
-3. 작은 단위로 리팩토링
-4. 각 단계마다 동작 확인
+### Step-by-step Approach
+1. Understand current code
+2. Write tests if possible
+3. Refactor in small units
+4. Verify behavior at each step
 
-## 리팩토링 패턴
+## Refactoring Patterns
 
-### 컴포넌트 분리
+### Component Separation
 **Before**
 ```tsx
 function BigComponent() {
-  // 200줄의 코드...
+  // 200 lines of code...
 }
 ```
 
@@ -46,12 +46,12 @@ function BigComponent() {
 }
 ```
 
-### 커스텀 훅 추출
+### Custom Hook Extraction
 **Before**
 ```tsx
 function Component() {
   const [data, setData] = useState();
-  useEffect(() => { /* 복잡한 로직 */ }, []);
+  useEffect(() => { /* complex logic */ }, []);
   // ...
 }
 ```
@@ -60,7 +60,7 @@ function Component() {
 ```tsx
 function useComplexLogic() {
   const [data, setData] = useState();
-  useEffect(() => { /* 복잡한 로직 */ }, []);
+  useEffect(() => { /* complex logic */ }, []);
   return { data };
 }
 
@@ -69,10 +69,10 @@ function Component() {
 }
 ```
 
-### 타입 통합
+### Type Consolidation
 **Before**
 ```typescript
-// 여러 파일에 중복된 타입
+// Duplicate types in multiple files
 type Session = { id: string; title: string; }
 ```
 
@@ -82,18 +82,18 @@ type Session = { id: string; title: string; }
 export type Session = { id: string; title: string; }
 ```
 
-### 서비스 레이어 분리
+### Service Layer Separation
 **Before**
 ```typescript
 router.get('/', async (req, res) => {
-  // 복잡한 비즈니스 로직이 라우트에...
+  // Complex business logic in route...
 });
 ```
 
 **After**
 ```typescript
 // services/feature.service.ts
-export async function getFeatures() { /* 로직 */ }
+export async function getFeatures() { /* logic */ }
 
 // routes/feature.ts
 router.get('/', async (req, res) => {
@@ -102,18 +102,18 @@ router.get('/', async (req, res) => {
 });
 ```
 
-## 프로젝트별 리팩토링 포인트
+## Project-specific Refactoring Points
 
 ### apps/web
-- 큰 컴포넌트 → 작은 컴포넌트로 분리
-- 반복 로직 → 커스텀 훅으로 추출
-- 인라인 스타일 → Tailwind 클래스
+- Large components → Split into smaller components
+- Repeated logic → Extract to custom hooks
+- Inline styles → Tailwind classes
 
 ### apps/server
-- 라우트 내 로직 → 서비스로 분리
-- 중복 검증 → 미들웨어로 추출
-- 하드코딩 → 상수/환경변수로
+- Logic in routes → Separate to services
+- Duplicate validation → Extract to middleware
+- Hardcoded values → Constants/environment variables
 
 ### packages/shared
-- 중복 타입 → 통합
-- 유틸 함수 공유
+- Duplicate types → Consolidate
+- Share utility functions

@@ -1,60 +1,60 @@
 ---
 name: code-review
-description: "코드 리뷰 수행. '코드 리뷰', '리뷰해줘', 'PR 검토', '코드 검토' 요청 시 사용"
+description: "Code review. Use for 'code review', 'PR review', 'review this' requests"
 allowed-tools: Read, Grep, Glob, Task
 ---
 
 # Code Review Skill
 
-## 역할
+## Role
 
-코드 변경사항을 검토하고 개선점을 제안하는 코드 리뷰어
+Code reviewer who reviews code changes and suggests improvements
 
-## 리뷰 체크리스트
+## Review Checklist
 
-### 1. 코드 품질
-- [ ] 타입 안전성 확인 (any 사용 지양)
-- [ ] 에러 핸들링 적절성
-- [ ] 코드 중복 여부
-- [ ] 함수/컴포넌트 크기 적절성
+### 1. Code Quality
+- [ ] Type safety check (avoid any)
+- [ ] Error handling adequacy
+- [ ] Code duplication
+- [ ] Function/component size appropriateness
 
-### 2. 프로젝트 컨벤션
-- [ ] 파일 명명 규칙 준수 (PascalCase 컴포넌트, camelCase 훅)
-- [ ] 디렉토리 구조 준수
-- [ ] 공유 타입은 packages/shared 사용
+### 2. Project Conventions
+- [ ] File naming rules (PascalCase components, camelCase hooks)
+- [ ] Directory structure compliance
+- [ ] Shared types use packages/shared
 
-### 3. React 특화 (apps/web)
-- [ ] 불필요한 리렌더링 방지
-- [ ] 훅 의존성 배열 정확성
-- [ ] 컴포넌트 분리 적절성
+### 3. React Specific (apps/web)
+- [ ] Unnecessary re-render prevention
+- [ ] Hook dependency array accuracy
+- [ ] Component separation appropriateness
 
-### 4. API 특화 (apps/server)
-- [ ] RESTful 규칙 준수
-- [ ] 입력 검증
-- [ ] 에러 응답 일관성
+### 4. API Specific (apps/server)
+- [ ] RESTful rules compliance
+- [ ] Input validation
+- [ ] Error response consistency
 
-### 5. 보안
-- [ ] SQL Injection 방지 (Drizzle 파라미터 바인딩)
-- [ ] XSS 방지
-- [ ] 민감 정보 노출 없음
+### 5. Security
+- [ ] SQL Injection prevention (Drizzle parameter binding)
+- [ ] XSS prevention
+- [ ] No sensitive information exposure
 
-## 리뷰 출력 형식
+## Review Output Format
 
 ```markdown
-## 리뷰 요약
-[전체적인 코드 품질 평가]
+## Review Summary
+[Overall code quality assessment]
 
-## 주요 발견사항
+## Key Findings
 ### Critical
-- [심각한 문제]
+- [Severe issues]
 
 ### Warning
-- [개선 필요 사항]
+- [Items needing improvement]
 
 ### Suggestion
-- [권장 사항]
+- [Recommendations]
 
-## 파일별 상세
-### `파일경로:라인번호`
-[구체적 피드백]
+## File Details
+### `filepath:line_number`
+[Specific feedback]
 ```

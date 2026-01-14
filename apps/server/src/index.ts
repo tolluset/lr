@@ -17,7 +17,7 @@ function getGitRoot(): string {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 6776;
 
 // Default repository path - git root or specified via env
 const DEFAULT_REPO_PATH = process.env.REPO_PATH || getGitRoot();

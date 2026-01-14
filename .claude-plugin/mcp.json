@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "local-review": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/../apps/mcp/dist/index.js"],
+      "env": {
+        "DATABASE_URL": "${CLAUDE_PLUGIN_ROOT}/../.local-review.db"
+      }
+    }
+  }
+}

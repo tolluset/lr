@@ -1,55 +1,55 @@
 ---
 name: feature-impl
-description: "새 기능 구현. '기능 추가', '구현해줘', 'feature', '새로운 기능' 요청 시 사용"
+description: "New feature implementation. Use for 'add feature', 'implement', 'new feature' requests"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, Task
 ---
 
 # Feature Implementation Skill
 
-## 역할
+## Role
 
-새로운 기능을 설계하고 구현하는 개발자
+Developer who designs and implements new features
 
-## 구현 프로세스
+## Implementation Process
 
-### 1. 요구사항 분석
-- 기능의 목적과 범위 파악
-- 기존 코드와의 연관성 확인
-- 필요한 변경 파일 목록화
+### 1. Requirements Analysis
+- Understand feature purpose and scope
+- Check relationship with existing code
+- List files that need changes
 
-### 2. 설계
-- 데이터 모델 변경 필요 여부 확인 (packages/db/src/schema.ts)
-- API 엔드포인트 설계 (apps/server/src/routes/)
-- UI 컴포넌트 설계 (apps/web/src/components/)
-- 공유 타입 정의 (packages/shared/src/index.ts)
+### 2. Design
+- Check if data model changes needed (packages/db/src/schema.ts)
+- Design API endpoints (apps/server/src/routes/)
+- Design UI components (apps/web/src/components/)
+- Define shared types (packages/shared/src/index.ts)
 
-### 3. 구현 순서
-1. **DB 스키마** - 필요시 테이블/컬럼 추가
-2. **공유 타입** - API 요청/응답 타입 정의
-3. **백엔드 API** - 라우트 및 서비스 구현
-4. **프론트엔드 훅** - React Query 훅 작성
-5. **UI 컴포넌트** - 화면 구현
+### 3. Implementation Order
+1. **DB Schema** - Add tables/columns if needed
+2. **Shared Types** - Define API request/response types
+3. **Backend API** - Implement routes and services
+4. **Frontend Hooks** - Write React Query hooks
+5. **UI Components** - Implement screens
 
-### 4. 검증
-- 타입 체크 통과 확인
-- API 테스트
-- UI 동작 확인
+### 4. Verification
+- Ensure type check passes
+- Test API
+- Verify UI behavior
 
-## 파일 생성 위치
+## File Creation Locations
 
-| 유형 | 경로 |
+| Type | Path |
 |------|------|
-| DB 스키마 | `packages/db/src/schema.ts` |
-| 공유 타입 | `packages/shared/src/index.ts` |
-| API 라우트 | `apps/server/src/routes/[name].ts` |
-| 서비스 | `apps/server/src/services/[name].service.ts` |
-| React 훅 | `apps/web/src/hooks/use[Name].ts` |
-| 페이지 | `apps/web/src/pages/[Name]Page.tsx` |
-| 컴포넌트 | `apps/web/src/components/[feature]/[Name].tsx` |
+| DB Schema | `packages/db/src/schema.ts` |
+| Shared Types | `packages/shared/src/index.ts` |
+| API Routes | `apps/server/src/routes/[name].ts` |
+| Services | `apps/server/src/services/[name].service.ts` |
+| React Hooks | `apps/web/src/hooks/use[Name].ts` |
+| Pages | `apps/web/src/pages/[Name]Page.tsx` |
+| Components | `apps/web/src/components/[feature]/[Name].tsx` |
 
-## 코드 패턴
+## Code Patterns
 
-### API 라우트 템플릿
+### API Route Template
 ```typescript
 import { Router } from 'express';
 import { db } from '@local-review/db';
@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
 export default router;
 ```
 
-### React Query 훅 템플릿
+### React Query Hook Template
 ```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';

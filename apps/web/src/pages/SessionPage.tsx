@@ -59,8 +59,8 @@ export function SessionPage() {
 
   const handleCompleteReview = async () => {
     await updateSession.mutateAsync({ id: id!, data: { status: "completed" } });
-    toast.success("리뷰가 완료되었습니다!", {
-      description: `${session?.filesTotal}개 파일 리뷰 완료`,
+    toast.success("Review completed!", {
+      description: `${session?.filesTotal} files reviewed`,
     });
     navigate("/");
   };

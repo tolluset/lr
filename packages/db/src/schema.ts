@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
-// 리뷰 세션
+// Review sessions
 export const reviewSessions = sqliteTable("review_sessions", {
   id: text("id").primaryKey(),
   repositoryPath: text("repository_path").notNull(),
@@ -22,7 +22,7 @@ export const reviewSessions = sqliteTable("review_sessions", {
     .notNull(),
 });
 
-// 파일별 리뷰 상태
+// Per-file review status
 export const fileReviewStatus = sqliteTable(
   "file_review_status",
   {
@@ -44,7 +44,7 @@ export const fileReviewStatus = sqliteTable(
   (table) => [index("idx_file_review_session").on(table.sessionId, table.filePath)]
 );
 
-// 라인별 댓글
+// Line comments
 export const lineComments = sqliteTable(
   "line_comments",
   {
@@ -70,7 +70,7 @@ export const lineComments = sqliteTable(
   (table) => [index("idx_line_comments_file").on(table.sessionId, table.filePath)]
 );
 
-// 활동 로그
+// Activity logs
 export const activityLogs = sqliteTable(
   "activity_logs",
   {
@@ -98,7 +98,7 @@ export const activityLogs = sqliteTable(
   (table) => [index("idx_activity_session").on(table.sessionId, table.createdAt)]
 );
 
-// 타입 추출
+// Type extraction
 export type ReviewSession = typeof reviewSessions.$inferSelect;
 export type NewReviewSession = typeof reviewSessions.$inferInsert;
 export type FileReviewStatus = typeof fileReviewStatus.$inferSelect;
